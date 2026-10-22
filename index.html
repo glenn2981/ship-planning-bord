@@ -107,6 +107,12 @@ let ships=[
 {id:4,name:"MV Example 04",imo:"9000004",terminal:"CTNM",eta:"23-10-2026 06:00",etd:"23-10-2026 17:00",survey:"Loading",surveyor:"Kees",status:"Gepland"},
 {id:5,name:"MV Example 05",imo:"9000005",terminal:"Overige",eta:"23-10-2026 10:00",etd:"23-10-2026 20:00",survey:"Discharge",surveyor:"-",status:"Vertraging"}
 ];
+try {
+  const savedShips = localStorage.getItem("surveyShips");
+  if (savedShips) ships = JSON.parse(savedShips);
+} catch (e) {
+  console.log("Opgeslagen planning kon niet worden geladen.");
+}
 let statuses=["Gepland","Aan boord","Controle","Vertraging","Nieuw"];
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function tag(s){
@@ -114,6 +120,7 @@ let cl={"Gepland":"planned","Aan boord":"aboard","Controle":"check","Vertraging"
 return '<span class="tag '+cl+'">'+esc(s)+'</span>';
 }
 function render(){
+localStorage.setItem("surveyShips", JSON.stringify(ships));
 let q=document.getElementById("search").value.toLowerCase();
 let t=document.getElementById("terminal").value;
 let sf=document.getElementById("statusFilter").value;
