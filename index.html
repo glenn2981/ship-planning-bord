@@ -106,7 +106,7 @@ const SUPABASE_KEY = "sb_publishable_ykwK6HnplxzAJUED7D7hfg_x8UePP9R";
 
 window.shipSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 async function saveShipToSupabase(ship) {
-  const { error } = await supabase
+ const { error } = await window.shipSupabase
     .from("ships")
     .insert({
       vessel_name: ship.name,
@@ -165,7 +165,7 @@ document.getElementById("board").innerHTML=html;
 async function setStatus(id,value){
   const ship=ships.find(s=>s.id===id);
   if(!ship)return;
-  const {error}=await supabase.from("ships")
+  const {error}=await window.shipSupabase.from("ships")
     .update({status:value})
     .eq("vessel_name",ship.name)
     .eq("terminal",ship.terminal);
