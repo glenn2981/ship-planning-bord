@@ -104,7 +104,7 @@ header{padding:15px}
 const SUPABASE_URL = "https://yonliumwqzasdqzxhvvf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ykwK6HnplxzAJUED7D7hfg_x8UePP9R";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window.shipSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 async function saveShipToSupabase(ship) {
   const { error } = await supabase
     .from("ships")
