@@ -124,6 +124,24 @@ async function saveShipToSupabase(ship) {
 
   return true;
 }
+  const { error } = await supabase
+    .from("ships")
+    .insert({
+      vessel_name: ship.name,
+      terminal: ship.terminal,
+      eta: ship.eta,
+      etd: ship.etd,
+      status: ship.status,
+      surveyor: ship.surveyor
+    });
+
+  if (error) {
+    alert("Opslaan mislukt: " + error.message);
+    return false;
+  }
+
+  return true;
+}
 let ships=[];
 try {
   const savedShips = .getItem("surveyShips");
@@ -161,7 +179,17 @@ html+='</tbody></table>';
 });
 document.getElementById("board").innerHTML=html;
 }
-function setStatus(id,value){ships.find(s=>s.id===id).status=value;render()}
+async function setStatus(id,value){
+  const ship=ships.find(s=>s.id===id);
+  if(!ship)return;
+  const {error}=await supabase.from("ships")
+    .update({status:value})
+    .eq("vessel_name",ship.name)
+    .eq("terminal",ship.terminal);
+  if(error){alert("Opslaan mislukt: "+error.message);return;}
+  ship.status=value;
+  render();
+}
 async function addShip(){
 let name=prompt("Naam van het schip:");
 if(!name)return;
