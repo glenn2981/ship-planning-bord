@@ -124,24 +124,7 @@ async function saveShipToSupabase(ship) {
 
   return true;
 }
-  const { error } = await supabase
-    .from("ships")
-    .insert({
-      vessel_name: ship.name,
-      terminal: ship.terminal,
-      eta: ship.eta,
-      etd: ship.etd,
-      status: ship.status,
-      surveyor: ship.surveyor
-    });
-
-  if (error) {
-    alert("Opslaan mislukt: " + error.message);
-    return false;
-  }
-
-  return true;
-}
+ 
 let ships=[];
 try {
   const savedShips = .getItem("surveyShips");
