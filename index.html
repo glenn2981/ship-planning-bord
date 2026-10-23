@@ -127,7 +127,7 @@ async function saveShipToSupabase(ship) {
  
 let ships=[];
 try {
-  const savedShips = .getItem("surveyShips");
+  const savedShips = localStorage.getItem("surveyShips");
   if (savedShips) ships = JSON.parse(savedShips);
 } catch (e) {
   console.log("Opgeslagen planning kon niet worden geladen.");
