@@ -212,6 +212,8 @@ const ship = {
 const saved = await saveShipToSupabase(ship);
 if (!saved) return;
 
+const saved = await saveShipToSupabase(ship);
+if (!saved) return;
 ships.push(ship);
 render();
 }
