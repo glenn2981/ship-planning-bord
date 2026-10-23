@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Scheepsplanbord | Survey</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font:14px Arial,sans-serif;color:#323338;background:#f6f7fb}
@@ -100,15 +101,13 @@ header{padding:15px}
 </main>
 </div>
 <script>
-let ships=[
-{id:1,name:"MV Example 01",imo:"9000001",terminal:"CTB",eta:"22-10-2026 08:00",etd:"22-10-2026 18:00",survey:"Initial",surveyor:"Jan",status:"Aan boord"},
-{id:2,name:"MV Example 02",imo:"9000002",terminal:"CTB",eta:"22-10-2026 14:00",etd:"23-10-2026 02:00",survey:"Sampling",surveyor:"Piet",status:"Gepland"},
-{id:3,name:"MV Example 03",imo:"9000003",terminal:"CTNM",eta:"22-10-2026 19:00",etd:"23-10-2026 06:00",survey:"Gas test",surveyor:"-",status:"Controle"},
-{id:4,name:"MV Example 04",imo:"9000004",terminal:"CTNM",eta:"23-10-2026 06:00",etd:"23-10-2026 17:00",survey:"Loading",surveyor:"Kees",status:"Gepland"},
-{id:5,name:"MV Example 05",imo:"9000005",terminal:"Overige",eta:"23-10-2026 10:00",etd:"23-10-2026 20:00",survey:"Discharge",surveyor:"-",status:"Vertraging"}
-];
+const SUPABASE_URL = "https://yonliumwqzasdqzxhvvf.supabase.
+const SUPABASE_KEY = "sb_publishable_ykwK6HnplxzAJUED7D7hfg_x8UePP9R";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let ships=[];
 try {
-  const savedShips = localStorage.getItem("surveyShips");
+  const savedShips = .getItem("surveyShips");
   if (savedShips) ships = JSON.parse(savedShips);
 } catch (e) {
   console.log("Opgeslagen planning kon niet worden geladen.");
