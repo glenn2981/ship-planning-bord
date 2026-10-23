@@ -105,6 +105,25 @@ const SUPABASE_URL = "https://yonliumwqzasdqzxhvvf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ykwK6HnplxzAJUED7D7hfg_x8UePP9R";
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+async function saveShipToSupabase(ship) {
+  const { error } = await supabase
+    .from("ships")
+    .insert({
+      vessel_name: ship.name,
+      terminal: ship.terminal,
+      eta: ship.eta,
+      etd: ship.etd,
+      status: ship.status,
+      surveyor: ship.surveyor
+    });
+
+  if (error) {
+    alert("Opslaan mislukt: " + error.message);
+    return false;
+  }
+
+  return true;
+}
 let ships=[];
 try {
   const savedShips = .getItem("surveyShips");
@@ -143,14 +162,29 @@ html+='</tbody></table>';
 document.getElementById("board").innerHTML=html;
 }
 function setStatus(id,value){ships.find(s=>s.id===id).status=value;render()}
-function addShip(){
+async function addShip(){
 let name=prompt("Naam van het schip:");
 if(!name)return;
 let terminal=prompt("Terminal: CTB, CTNM of Overige","CTB");
 if(!["CTB","CTNM","Overige"].includes(terminal)){alert("Gebruik CTB, CTNM of Overige.");return}
 let eta=prompt("ETA (handmatig invullen):","23-10-2026 08:00");
 if(!eta)return;
-ships.push({id:Date.now(),name,imo:"-",terminal,eta,etd:"-",survey:"Nog in te vullen",surveyor:"-",status:"Nieuw"});
+const ship = {
+  id: Date.now(),
+  name,
+  imo: "-",
+  terminal,
+  eta,
+  etd: "-",
+  survey: "Nog in te vullen",
+  surveyor: "-",
+  status: "Nieuw"
+};
+
+const saved = await saveShipToSupabase(ship);
+if (!saved) return;
+
+ships.push(ship);
 render();
 }
 render();
