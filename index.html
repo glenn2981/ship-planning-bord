@@ -113,7 +113,7 @@ try {
   console.log("Opgeslagen planning kon niet worden geladen.");
 }
 let statuses=["Gepland","Aan boord","Controle","Vertraging","Nieuw"];
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
 function tag(s){
 let cl={"Gepland":"planned","Aan boord":"aboard","Controle":"check","Vertraging":"delay","Nieuw":"new"}[s]||"planned";
 return '<span class="tag '+cl+'">'+esc(s)+'</span>';
