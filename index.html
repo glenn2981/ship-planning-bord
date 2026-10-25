@@ -208,16 +208,35 @@ html+='</tbody></table>';
 });
 document.getElementById("board").innerHTML=html;
 }
-async function setStatus(id,value){
-  const ship=ships.find(s=>String(s.id)===String(id));
-  if(!ship)return;
- const {error}=await window.shipSupabase
+async function setStatus(id, value) {
+  const ship = ships.find(s => String(s.id) === String(id));
+
+  if (!ship) {
+    alert("Schip niet gevonden in het planbord.");
+    return;
+  }
+
+  const { data, error } = await window.shipSupabase
     .from("ships")
-    .update({status:value})
-    .eq("id",ship.id);
-  if(error){alert("Opslaan mislukt: "+error.message);return;}
-  ship.status=value;
-  render();
+    .update({ status: value })
+    .eq("id", ship.id)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    alert("Supabase fout: " + error.message);
+    return;
+  }
+  if (!data) {
+  alert("Geen schip aangepast in Supabase. ID: " + ship.id);
+  return;
+}
+ship.status = value;
+render();
+
+  
+
+ 
 }
 async function addShip(){
 let name=prompt("Naam van het schip:");
