@@ -109,7 +109,7 @@ function toSupabaseDate(value) {
   if (!value) return null;
   const [date, time] = value.split(" ");
   const [day, month, year] = date.split("-");
-  return ${year}-${month}-${day}T${time}:00;
+ return `${year}-${month}-${day}T${time}:00`;
 }
  async function saveShipToSupabase(ship) {
  const { error } = await window.shipSupabase
