@@ -243,7 +243,7 @@ let name=prompt("Naam van het schip:");
 if(!name)return;
 let terminal=prompt("Terminal: CTB, CTNM of Overige","CTB");
 if(!["CTB","CTNM","Overige"].includes(terminal)){alert("Gebruik CTB, CTNM of Overige.");return}
-let eta=prompt("ETA (YYYY-MM-DD HH:MM):","2026-10-26 08:00");
+letlet eta=prompt("ETA (YYYY-MM-DD HH:MM):","2026-12-27 11:00");
 if(!eta)return;
 const ship = {
   id: Date.now(),
