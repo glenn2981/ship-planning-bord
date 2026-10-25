@@ -209,7 +209,7 @@ html+='</tbody></table>';
 document.getElementById("board").innerHTML=html;
 }
 async function setStatus(id,value){
-  const ship=ships.find(s=>s.id===id);
+  const ship=ships.find(s=>String(s.id)===String(id));
   if(!ship)return;
  const {error}=await window.shipSupabase
     .from("ships")
