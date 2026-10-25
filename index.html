@@ -134,12 +134,31 @@ function toSupabaseDate(value) {
 }
  
 let ships=[];
-try {
-  const savedShips = localStorage.getItem("surveyShips");
-  if (savedShips) ships = JSON.parse(savedShips);
-} catch (e) {
-  console.log("Opgeslagen planning kon niet worden geladen.");
+async function loadShips(){
+  const {data,error}=await window.shipSupabase
+    .from("ships")
+    .select("*");
+
+  if(error){
+    alert("Schepen laden mislukt: "+error.message);
+    return;
+  }
+
+  ships=data.map(s=>({
+    id:s.id,
+    name:s.vessel_name,
+    imo:"-",
+    terminal:s.terminal,
+    eta:s.eta,
+    etd:s.etd,
+    survey:"Nog in te vullen",
+    surveyor:s.surveyor||"-",
+    status:s.status||"Nieuw"
+  }));
+
+  render();
 }
+loadShips();
 let statuses=["Gepland","Aan boord","Controle","Vertraging","Nieuw"];
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
 function tag(s){
