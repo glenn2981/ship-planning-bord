@@ -107,10 +107,11 @@ const SUPABASE_KEY = "sb_publishable_ykwK6HnplxzAJUED7D7hfg_x8UePP9R";
 window.shipSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 function toSupabaseDate(value) {
   if (!value) return null;
-  const [date, time] = value.split(" ");
-  const [day, month, year] = date.split("-");
- return `${year}-${month}-${day}T${time}:00`;
 
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return null;
+
+  return d.toISOString();
 }
  async function saveShipToSupabase(ship) {
  const { error } = await window.shipSupabase
