@@ -207,10 +207,10 @@ document.getElementById("board").innerHTML=html;
 async function setStatus(id,value){
   const ship=ships.find(s=>s.id===id);
   if(!ship)return;
-  const {error}=await window.shipSupabase.from("ships")
+ const {error}=await window.shipSupabase
+    .from("ships")
     .update({status:value})
-    .eq("vessel_name",ship.name)
-    .eq("terminal",ship.terminal);
+    .eq("id",ship.id);
   if(error){alert("Opslaan mislukt: "+error.message);return;}
   ship.status=value;
   render();
