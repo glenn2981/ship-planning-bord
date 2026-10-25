@@ -105,14 +105,20 @@ const SUPABASE_URL = "https://yonliumwqzasdqzxhvvf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ykwK6HnplxzAJUED7D7hfg_x8UePP9R";
 
 window.shipSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-async function saveShipToSupabase(ship) {
+function toSupabaseDate(value) {
+  if (!value) return null;
+  const [date, time] = value.split(" ");
+  const [day, month, year] = date.split("-");
+  return ${year}-${month}-${day}T${time}:00;
+}
+ async function saveShipToSupabase(ship) {
  const { error } = await window.shipSupabase
     .from("ships")
     .insert({
       vessel_name: ship.name,
       terminal: ship.terminal,
-      eta: ship.eta,
-      etd: ship.etd,
+      eta: toSupabaseDate(ship.eta),
+      etd: toSupabaseDate(ship.etd),
       status: ship.status,
       surveyor: ship.surveyor
     });
