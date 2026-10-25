@@ -114,23 +114,27 @@ function toSupabaseDate(value) {
   return d.toISOString();
 }
  async function saveShipToSupabase(ship) {
- const { error } = await window.shipSupabase
-    .from("ships")
-    .insert({
-      vessel_name: ship.name,
-      terminal: ship.terminal,
-      eta: toSupabaseDate(ship.eta),
-      etd: toSupabaseDate(ship.etd),
-      status: ship.status,
-      surveyor: ship.surveyor
-    });
+    const { data, error } = await window.shipSupabase
+        .from("ships")
+        .insert({
+            vessel_name: ship.name,
+            terminal: ship.terminal,
+            eta: toSupabaseDate(ship.eta),
+            etd: toSupabaseDate(ship.etd),
+            status: ship.status,
+            surveyor: ship.surveyor
+        })
+        .select("id")
+        .single();
 
-  if (error) {
-    alert("Opslaan mislukt: " + error.message);
-    return false;
-  }
+    if (error) {
+        alert("Opslaan mislukt: " + error.message);
+        return false;
+    }
 
-  return true;
+    ship.id = data.id;
+    return true;
+}
 }
  
 let ships=[];
