@@ -117,12 +117,14 @@ function toSupabaseDate(value) {
     const { data, error } = await window.shipSupabase
         .from("ships")
         .insert({
-            vessel_name: ship.name,
-            terminal: ship.terminal,
-            eta: toSupabaseDate(ship.eta),
-            etd: toSupabaseDate(ship.etd),
-            status: ship.status,
-            surveyor: ship.surveyor
+          vessel_name: ship.name,
+terminal: ship.terminal,
+eta: toSupabaseDate(ship.eta),
+etb: toSupabaseDate(ship.etb),
+etc: toSupabaseDate(ship.etc),
+etd: toSupabaseDate(ship.etd),
+status: ship.status,
+surveyor: ship.surveyor
         })
         .select("id")
         .single();
@@ -241,17 +243,35 @@ render();
 async function addShip(){
 let name=prompt("Naam van het schip:");
 if(!name)return;
-let terminal=prompt("Terminal: CTB, CTNM of Overige","CTB");
-if(!["CTB","CTNM","Overige"].includes(terminal)){alert("Gebruik CTB, CTNM of Overige.");return}
-letlet eta=prompt("ETA (YYYY-MM-DD HH:MM):","2026-12-27 11:00");
+let terminal = prompt("Terminal: CTB, CTNM of Overige", "CTB");
+if (!["CTB", "CTNM", "Overige"].includes(terminal)) {
+    alert("Gebruik CTB, CTNM of Overige.");
+    return;
+}
+let locatie = prompt("Locatie / ligplaats / kade:", "");
+let eta = prompt("ETA (YYYY-MM-DD HH:MM):", "2026-12-27 11:00");
 if(!eta)return;
+
+let etb = prompt("ETB (YYYY-MM-DD HH:MM), leeg laten indien onbekend:", "");
+let etc = prompt("ETC (YYYY-MM-DD HH:MM), leeg laten indien onbekend:", "");
+let etd = prompt("ETD (YYYY-MM-DD HH:MM), leeg laten indien onbekend:", "");
+
+for (const [label, value] of [["ETA", eta], ["ETB", etb], ["ETC", etc], ["ETD", etd]]) {
+    if (value && !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(value)) {
+        alert("Gebruik bij " + label + " het formaat YYYY-MM-DD HH:MM");
+        return;
+    }
+}
 const ship = {
   id: Date.now(),
   name,
   imo: "-",
   terminal,
+  locatie,
   eta,
-  etd: "-",
+  etb: etb || null,
+etc: etc || null,
+  etd: etd || "-",
   survey: "Nog in te vullen",
   surveyor: "-",
   status: "Nieuw"
