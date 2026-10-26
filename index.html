@@ -205,7 +205,8 @@ if(t&&t!==term)return;
 html+='<div class="group"><span class="dot" style="background:'+["#6161ff","#00a86b","#fdab3d"][i]+'"></span>'+term+' <span class="small">('+rows.length+')</span></div>';
 html+='<table><thead><tr><th>Schip / IMO</th><th>ETA</th><th>ETB</th><th>ETC</th><th>ETD</th><th>Survey</th><th>Surveyor</th><th>Status</th><th>Terminal</th></tr></thead><tbody>';
 rows.forEach(s=>{
-html+='<tr><td><b>'+esc(s.name)+'</b><br><span class="small">IMO '+esc(s.imo)+'</span></td><td>'+formatDateTime(s.eta)+'</td><td>'+formatDateTime(s.etb)+'</td><td>'+formatDateTime(s.etc)+'</td><td>'+formatDateTime(s.etd)+'</td><td>'+esc(s.survey)+'</td><td>'+esc(s.surveyor)+'</td><td><select aria-label="Status" onchange="setStatus(this.dataset.id,this.value)" data-id="'+esc(s.id)+'">'+statuses.map(x=>'<option '+(x===s.status?'selected':'')+'>'+x+'</option>').join('')+'</select></td><td>'+esc(s.terminal)+'</td></tr>';
+let alertText = s.status === "Controle" ? "CONTROLE NODIG" : s.status === "Vertraging" ? "VERTRAGING" : "";
+html+='<tr style="background:'+(s.status==="Controle"?"#fff3cd":s.status==="Vertraging"?"#f8d7da":"transparent")+'"><td><b>'+esc(s.name)+'</b>'+(alertText?'<br><strong>'+alertText+'</strong>':'')+'<br><span class="small">IMO '+esc(s.imo)+'</span></td><td>'+formatDateTime(s.eta)+'</td><td>'+formatDateTime(s.etb)+'</td><td>'+formatDateTime(s.etc)+'</td><td>'+formatDateTime(s.etd)+'</td><td>'+esc(s.survey)+'</td><td>'+esc(s.surveyor)+'</td><td><select aria-label="Status" onchange="setStatus(this.dataset.id,this.value)" data-id="'+esc(s.id)+'">'+statuses.map(x=>'<option '+(x===s.status?'selected':'')+'>'+x+'</option>').join('')+'</select></td><td>'+esc(s.terminal)+'</td></tr>';
 });
 if(!rows.length)html+='<tr><td colspan="7" class="small">Geen schepen in deze selectie</td></tr>';
 html+='</tbody></table>';
