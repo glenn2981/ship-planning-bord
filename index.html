@@ -294,19 +294,61 @@ render();
 function openShipDossier(){
   const zoek = prompt("Vul de scheepsnaam of IMO in:");
   if (!zoek) return;
+
   const schip = ships.find(s =>
     (s.name || "").toLowerCase().includes(zoek.toLowerCase()) ||
     String(s.imo || "").includes(zoek)
   );
+
   if (!schip) {
-    alert("Geen schip gevonden. Controleer de naam of IMO.");
+    alert("Geen schip gevonden.");
     return;
   }
-  alert("SHIP DOSSIER / SCHEEPSINFO\n\n" +
-    "Schip: " + (schip.name || "-") + "\n" +
-    "IMO: " + (schip.imo || "-") + "\n" +
-    "Terminal: " + (schip.terminal || "-") + "\n\n" +
-    "Dit schip is geselecteerd. Het uitgebreide scheepsdossier bouwen we hierna.");
+
+  const key = String(schip.imo || schip.name).trim();
+  const dossiers = JSON.parse(
+    localStorage.getItem("shipDossiers") || "{}"
+  );
+
+  const dossier = dossiers[key] || {};
+
+ const velden = [
+  ["shipType", "Type schip"],
+  ["flag", "Vlag"],
+  ["tankCount", "Aantal tanks"],
+  ["coating", "Tankcoating"],
+  ["lastCargo1", "Laatste cargo"],
+  ["lastCargo2", "Vorige cargo"],
+  ["lastCargo3", "Cargo daarvoor"],
+  ["measuring", "Meetinstallatie"],
+  ["sampling", "Monsterinstallatie"],
+  ["connections", "Aansluitingen / adapters"],
+  ["tankDetails", "Technische tankgegevens"],
+  ["vef", "VEF / bron / versie"],
+  ["documents", "Overige scheepsdocumenten"]
+];
+
+velden.forEach(([veld, label]) => {
+  const huidig = dossier[veld] || "";
+  const invoer = prompt(
+    label + " (leeg laten = behouden):",
+    huidig
+  );
+
+  if (invoer !== null && invoer.trim() !== "") {
+    dossier[veld] = invoer.trim();
+  }
+});
+
+dossiers[key] = dossier;
+localStorage.setItem("shipDossiers", JSON.stringify(dossiers));
+
+alert(
+  "Scheepsdossier opgeslagen!\n\n" +
+  "Schip: " + (schip.name || "-") + "\n" +
+  "IMO: " + (schip.imo || "-") + "\n" +
+  "Terminal: " + (schip.terminal || "-")
+);
 }
 </script>
 </body>
