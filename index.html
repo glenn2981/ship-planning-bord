@@ -62,7 +62,10 @@ header{padding:15px}
   <div>⚑ Waarschuwingen</div>
   <div>▤ Werkorders</div>
   <div>⚙️ Instellingen</div>
+
+    <div onclick="openShipDossier()">📁 Ship Dossier / Scheepsinfo</div>
 </nav>
+
 <main>
   <div style="font-size:12px;color:#888">WORKSPACE / OPERATIONS</div>
   <h2 style="margin-bottom:4px">Scheepsplanning</h2>
@@ -288,6 +291,23 @@ ships.push(ship);
 render();
 }
 render();
+function openShipDossier(){
+  const zoek = prompt("Vul de scheepsnaam of IMO in:");
+  if (!zoek) return;
+  const schip = ships.find(s =>
+    (s.name || "").toLowerCase().includes(zoek.toLowerCase()) ||
+    String(s.imo || "").includes(zoek)
+  );
+  if (!schip) {
+    alert("Geen schip gevonden. Controleer de naam of IMO.");
+    return;
+  }
+  alert("SHIP DOSSIER / SCHEEPSINFO\n\n" +
+    "Schip: " + (schip.name || "-") + "\n" +
+    "IMO: " + (schip.imo || "-") + "\n" +
+    "Terminal: " + (schip.terminal || "-") + "\n\n" +
+    "Dit schip is geselecteerd. Het uitgebreide scheepsdossier bouwen we hierna.");
+}
 </script>
 </body>
 </html>
