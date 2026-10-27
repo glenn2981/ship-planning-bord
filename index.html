@@ -291,7 +291,7 @@ ships.push(ship);
 render();
 }
 render();
-function openShipDossier(){
+function openShipDossier() {
   const zoek = prompt("Vul de scheepsnaam of IMO in:");
   if (!zoek) return;
 
@@ -309,46 +309,181 @@ function openShipDossier(){
   const dossiers = JSON.parse(
     localStorage.getItem("shipDossiers") || "{}"
   );
-
   const dossier = dossiers[key] || {};
 
- const velden = [
-  ["shipType", "Type schip"],
-  ["flag", "Vlag"],
-  ["tankCount", "Aantal tanks"],
-  ["coating", "Tankcoating"],
-  ["lastCargo1", "Laatste cargo"],
-  ["lastCargo2", "Vorige cargo"],
-  ["lastCargo3", "Cargo daarvoor"],
-  ["measuring", "Meetinstallatie"],
-  ["sampling", "Monsterinstallatie"],
-  ["connections", "Aansluitingen / adapters"],
-  ["tankDetails", "Technische tankgegevens"],
-  ["vef", "VEF / bron / versie"],
-  ["documents", "Overige scheepsdocumenten"]
-];
+  const velden = [
+    ["shipType", "Type schip"],
+    ["flag", "Vlag"],
+    ["tankCount", "Aantal tanks"],
+    ["coating", "Tankcoating"],
+    ["lastCargo1", "Laatste cargo"],
+    ["lastCargo2", "Vorige cargo"],
+    ["lastCargo3", "Cargo daarvoor"],
+    ["measuring", "Meetinstallatie"],
+    ["sampling", "Monsterinstallatie"],
+    ["connections", "Aansluitingen / adapters"],
+    ["tankDetails", "Technische tankgegevens"],
+    ["vef", "VEF / bron / versie"],
+    ["documents", "Overige scheepsdocumenten"]
+  ];
 
-velden.forEach(([veld, label]) => {
-  const huidig = dossier[veld] || "";
-  const invoer = prompt(
-    label + " (leeg laten = behouden):",
-    huidig
-  );
+  const overlay = document.createElement("div");
+  overlay.style.cssText = `
+    position:fixed; inset:0; z-index:99999;
+    background:rgba(10,20,35,.65);
+    display:flex; align-items:center;
+    justify-content:center; padding:16px;
+  `;
 
-  if (invoer !== null && invoer.trim() !== "") {
-    dossier[veld] = invoer.trim();
-  }
-});
+  const panel = document.createElement("div");
+  panel.style.cssText = `
+    background:#fff; color:#172033;
+    width:96vw; max-width:1600px;
+    height:94vh; max-height:94vh; overflow:auto;
+    border-radius:14px; padding:24px;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+    box-shadow:0 15px 50px #0005;
+  `;
 
-dossiers[key] = dossier;
-localStorage.setItem("shipDossiers", JSON.stringify(dossiers));
+  const header = document.createElement("div");
+  header.style.cssText = `
+    display:flex; justify-content:space-between;
+    align-items:flex-start; gap:12px;
+    border-bottom:1px solid #ddd;
+    padding-bottom:16px; margin-bottom:20px;
+  `;
 
-alert(
-  "Scheepsdossier opgeslagen!\n\n" +
-  "Schip: " + (schip.name || "-") + "\n" +
-  "IMO: " + (schip.imo || "-") + "\n" +
-  "Terminal: " + (schip.terminal || "-")
-);
+  const heading = document.createElement("div");
+  const title = document.createElement("h2");
+  title.textContent = "Ship Dossier / Scheepsinfo";
+  title.style.margin = "0 0 10px";
+
+  const info = document.createElement("p");
+  info.textContent =
+    "Schip: " + (schip.name || "-") +
+    " | IMO: " + (schip.imo || "-") +
+    " | Terminal: " + (schip.terminal || "-");
+  info.style.cssText = "margin:0;color:#526176;";
+
+  heading.append(title, info);
+
+  const closeTop = document.createElement("button");
+  closeTop.textContent = "✕";
+  closeTop.title = "Dossier sluiten";
+  closeTop.style.cssText =
+    "padding:10px 14px;cursor:pointer;border:0;" +
+    "border-radius:8px;background:#edf1f6;font-size:18px;";
+
+  header.append(heading, closeTop);
+  panel.appendChild(header);
+
+  const section = document.createElement("h3");
+  section.textContent = "Scheepsgegevens";
+  panel.appendChild(section);
+
+  const grid = document.createElement("div");
+  grid.style.cssText = `
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+  `;
+
+  const inputs = {};
+
+  velden.forEach(([veld, label]) => {
+    const wrap = document.createElement("div");
+
+    const caption = document.createElement("label");
+    caption.textContent = label;
+    caption.style.cssText =
+      "display:block;font-weight:bold;margin-bottom:6px;";
+
+    const input = document.createElement(
+      ["tankDetails", "documents", "connections"].includes(veld)
+        ? "textarea" : "input"
+    );
+
+    input.value = dossier[veld] || "";
+    input.style.cssText = `
+      width:100%; box-sizing:border-box;
+      padding:11px; border:1px solid #ccd4df;
+      border-radius:7px; font:14px Arial;
+      background:#fff;
+    `;
+
+    if (input.tagName === "TEXTAREA") {
+      input.rows = 3;
+    }
+
+    inputs[veld] = input;
+    wrap.append(caption, input);
+    grid.appendChild(wrap);
+  });
+
+  panel.appendChild(grid);
+
+  const footer = document.createElement("div");
+  footer.style.cssText = `
+    display:flex; gap:10px; flex-wrap:wrap;
+    margin-top:24px; padding-top:18px;
+    border-top:1px solid #ddd;
+  `;
+
+  const save = document.createElement("button");
+  save.textContent = "Dossier opslaan";
+  save.style.cssText = `
+    padding:13px 22px;background:#1769e0;color:white;
+    border:0;border-radius:8px;font-weight:bold;
+    cursor:pointer;
+  `;
+
+  save.onclick = () => {
+    try {
+      velden.forEach(([veld]) => {
+        dossier[veld] = inputs[veld].value.trim();
+      });
+
+      dossiers[key] = dossier;
+      localStorage.setItem(
+        "shipDossiers", JSON.stringify(dossiers)
+      );
+
+      alert("Scheepsdossier opgeslagen!");
+      overlay.remove();
+    } catch (e) {
+      alert("Opslaan mislukt. Controleer de browseropslag.");
+    }
+  };
+
+  const close = document.createElement("button");
+  close.textContent = "Sluiten";
+  close.style.cssText = `
+    padding:13px 22px;border:1px solid #ccd4df;
+    border-radius:8px;background:#f4f6f9;
+    cursor:pointer;
+  `;
+
+  close.onclick = () => overlay.remove();
+  closeTop.onclick = () => overlay.remove();
+
+  footer.append(save, close);
+  panel.appendChild(footer);
+
+  overlay.appendChild(panel);
+
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  document.addEventListener("keydown", function esc(e) {
+    if (e.key === "Escape") {
+      overlay.remove();
+      document.removeEventListener("keydown", esc);
+    }
+  });
+
+  document.body.appendChild(overlay);
 }
 </script>
 </body>
